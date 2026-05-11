@@ -24,7 +24,6 @@ Address two business problems using SQL Server and T-SQL:
 |---|---|
 | `auction.sql` | Main idempotent T-SQL script with schema, tables, stored procedures, and analytical queries |
 | `report.md` | Markdown report documenting the solution design, assumptions, methodology, and results |
-| `report.docx` | Report document version |
 | `README.md` | Project overview |
 
 ---
