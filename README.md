@@ -1,58 +1,90 @@
-# Adventure Works — Online Auction & Store Expansion
+# AdventureWorks Auction & Store Expansion
 
-**Course:** Managing Relational and Non-Relational Data (2026)
-**Database:** AdventureWorks (SQL Server / T-SQL)
+Academic project for **Relational and Non-Relational Databases**.
 
-## Overview
+This project extends the Microsoft AdventureWorks database with an online auction system and uses SQL analysis to recommend two US cities for brick-and-mortar store expansion.
 
-This project extends the AdventureWorks database to address two business problems:
+---
 
-1. **Stock Clearance (Online Auctions)** — An auction system to clear older product stock before new model announcements.
-2. **Brick and Mortar Expansion** — Data-driven recommendation of two US cities for Adventure Works' first physical retail stores.
+## Objective
 
-Everything is delivered in a single idempotent T-SQL script that can be executed repeatedly without errors.
+Address two business problems using SQL Server and T-SQL:
 
-## Files
+1. **Stock clearance through online auctions**  
+   Design and implement a database-backed auction subsystem for clearing eligible products.
+
+2. **Physical store expansion**  
+   Analyse customer and sales data to recommend two promising US cities for new retail stores.
+
+---
+
+## Repository contents
 
 | File | Description |
 |---|---|
-| `auction.sql` | Main deliverable. Idempotent T-SQL script containing the Auction schema (tables + stored procedures) and the store expansion analytical queries. |
-| `report.md` | Project report in Markdown with full documentation of the solution design, assumptions, methodology, results, and justification. |
+| `auction.sql` | Main idempotent T-SQL script with schema, tables, stored procedures, and analytical queries |
+| `report.md` | Markdown report documenting the solution design, assumptions, methodology, and results |
+| `report.docx` | Report document version |
+| `README.md` | Project overview |
 
-## Auction System
+---
 
-### Schema: `Auction`
+## Auction system
+
+The script creates an `Auction` schema with the core objects required to manage auction listings and bids.
+
+### Main database objects
 
 | Object | Type | Purpose |
 |---|---|---|
-| `Configuration` | Table | Single-row global config (bid increment, max multiplier, MakeFlag pricing). |
-| `Product` | Table | One row per auction. Tracks status, pricing bounds, expiry. |
-| `Bids` | Table | One row per bid. Tracks value, status, customer. |
-| `uspAddProductToAuction` | Stored Procedure | Creates an auction for an eligible product. |
-| `uspTryBidProduct` | Stored Procedure | Places a bid with validation and auto-close at max price. |
-| `uspRemoveProductFromAuction` | Stored Procedure | Cancels an active auction (preserves bid history). |
-| `uspListBidsOffersHistory` | Stored Procedure | Returns a customer's bid history (active or full). |
-| `uspUpdateProductAuctionStatus` | Stored Procedure | Finalizes expired auctions, marks winners and losers. |
+| `Auction.Configuration` | Table | Stores configurable auction rules |
+| `Auction.Product` | Table | Tracks products listed for auction |
+| `Auction.Bids` | Table | Stores bids and bid status |
+| `uspAddProductToAuction` | Stored procedure | Adds an eligible product to auction |
+| `uspTryBidProduct` | Stored procedure | Validates and places bids |
+| `uspRemoveProductFromAuction` | Stored procedure | Cancels an active auction |
+| `uspListBidsOffersHistory` | Stored procedure | Lists customer bid history |
+| `uspUpdateProductAuctionStatus` | Stored procedure | Finalises expired auctions and marks winners/losers |
 
-### Key Business Rules
+### Business rules implemented
 
-- Only currently commercialized products (`SellEndDate` and `DiscontinuedDate` are NULL)
-- Initial bid: 75% of ListPrice (`MakeFlag = 0`) or 50% (`MakeFlag = 1`)
-- Min increment: $0.05, max bid: ListPrice x MaxBidMultiplier — all configurable
+- Only eligible active products can be auctioned
 - One active auction per product at a time
+- Initial bid depends on product type/configuration
+- Minimum bid increment and maximum bid limits are configurable
+- Bid history is preserved even when auctions close or are cancelled
 
-## Store Expansion
+---
+
+## Store expansion analysis
 
 The analytical queries recommend **Bellflower** and **Berkeley**, California based on:
 
-1. Excluding cities with the top 30 US resellers
-2. Requiring sales in all 3 consumer-facing categories (Bikes, Clothing, Accessories)
-3. Ranking by total individual customer revenue
-4. Ensuring the stores aren't on the same area by zip code. 
-5. Confirming growing yearly trends (2012–2014)
+- Exclusion of cities already dominated by top resellers
+- Presence of sales across major consumer-facing categories
+- Individual customer revenue potential
+- Geographic separation using zip-code logic
+- Positive sales trends across the analysed years
 
-## Usage
+---
 
-1. Open `auction.sql` in SQL Server Management Studio (SSMS)
-2. Execute against the `AdventureWorks` database
-3. The script creates the schema, tables, stored procedures, and runs the analytical queries
+## How to run
+
+1. Open `auction.sql` in SQL Server Management Studio or Azure Data Studio.
+2. Connect to a SQL Server instance with the AdventureWorks database available.
+3. Execute the script against the AdventureWorks database.
+4. Review the generated objects and query outputs.
+
+The script is designed to be idempotent, so it can be re-run during development without manually dropping all objects first.
+
+---
+
+## Technologies
+
+`SQL Server` · `T-SQL` · `Stored Procedures` · `Database Design` · `AdventureWorks` · `Business Analysis`
+
+---
+
+## Notes
+
+This is an academic database project. The store recommendations depend on the AdventureWorks sample data and should be interpreted as a database-analysis exercise rather than a real market-entry strategy.
